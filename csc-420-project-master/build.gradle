@@ -1,0 +1,37 @@
+group 'Networking'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+mainClassName = "Main"
+
+sourceCompatibility = 1.7
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': version,
+                'Main-Class': 'Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'org.apache.httpcomponents:httpclient:4.0-alpha4'
+    compile 'org.json:json:20160212'
+    compile 'org.jdeferred:jdeferred:1.2.4'
+    compile group: 'com.miglayout', name: 'miglayout', version: '3.7.3.1'
+    compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.1.Final'
+    compile ('io.socket:socket.io-client:0.8.2') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    }
+}
